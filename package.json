@@ -4,7 +4,7 @@
   "description": "Telegram bot for trading on BitMEX exchange",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server"
   },
   "repository": {
     "type": "git",
