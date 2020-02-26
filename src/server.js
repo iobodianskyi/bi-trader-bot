@@ -6,6 +6,7 @@
   const server = express();
   const bodyParser = require('body-parser');
   const cors = require('cors');
+  const app = require('./app');
 
   server.use(bodyParser.json()); // support json encoded bodies
   server.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
@@ -18,4 +19,6 @@
   }
 
   startServer();
+
+  app.start();
 }());
