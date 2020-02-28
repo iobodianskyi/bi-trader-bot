@@ -1,5 +1,5 @@
 {
-  "name": "bi-trader",
+  "name": "bi-trader-bot",
   "version": "0.0.1",
   "description": "Telegram bot for trading on BitMEX exchange",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iobodianskyi/bi-trader.git"
+    "url": "git+https://github.com/iobodianskyi/bi-trader-bot.git"
   },
   "keywords": [
     "telegram",
@@ -19,9 +19,9 @@
   "author": "Ivan Obodianskyi",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/iobodianskyi/bi-trader/issues"
+    "url": "https://github.com/iobodianskyi/bi-trader-bot/issues"
   },
-  "homepage": "https://github.com/iobodianskyi/bi-trader#readme",
+  "homepage": "https://github.com/iobodianskyi/bi-trader-bot#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -30,6 +30,7 @@
     "node-fetch": "^2.6.0",
     "node-schedule": "^1.3.2",
     "qs": "^6.9.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "telegraf": "^3.36.0"
   }
 }
