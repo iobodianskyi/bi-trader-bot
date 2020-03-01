@@ -6,6 +6,7 @@
   const Markup = require('telegraf/markup');
 
   const db = require('./db');
+  const resources = require('./resources');
 
   let telegram;
   let bot;
@@ -39,6 +40,7 @@
 
     bot.catch((err) => {
       console.log(messages.error, err);
+      telegram.sendMessage(resources.app.telegram.myTelegramUserId, messages.error);
     });
 
     bot.start(async (ctx) => {
@@ -49,11 +51,14 @@
     // commands
     bot.command(commands.ping, ({ reply }) => reply(messages.ping, getKeyboard()));
 
+    // texts
     bot.hears('hey', ({ reply }) => {
       return reply('reply', getKeyboard());
     });
 
     bot.startPolling();
+
+    telegram.sendMessage(resources.app.telegram.myTelegramUserId, messages.started);
   }
 
   module.exports = { init };
