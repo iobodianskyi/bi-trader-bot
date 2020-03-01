@@ -6,9 +6,9 @@
   const bot = require('./bot');
 
 
-  const start = () => {
+  const start = async () => {
     // init db
-    db.init();
+    await db.init();
 
     // start bot
     bot.init(resources.app.telegram.biTraderBotToken);
