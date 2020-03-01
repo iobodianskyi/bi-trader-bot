@@ -3,11 +3,29 @@
 
   const admin = require('firebase-admin');
   const serviceAccount = require('./config/firestoreKeys.json');
+  let firestore;
 
   const init = () => {
     admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-    this.firestore = admin.firestore();
+    firestore = admin.firestore();
   }
 
-  module.exports = { init };
+  const addOrUpdateUser = async (user) => {
+    const docSnapshot = await firestore.doc(`users/${user.id}`).get();
+    if (docSnapshot.exists) { // update user
+      updateUser(user);
+    } else { // add new user
+      await addUser(user);
+    }
+  }
+
+  const addUser = async (user) => {
+    await firestore.doc(`users/${user.id}`).set(user);
+  }
+
+  const updateUser = async (user) => {
+    await firestore.doc(`users/${user.id}`).set(user, { merge: true });
+  }
+
+  module.exports = { init, addOrUpdateUser };
 })();

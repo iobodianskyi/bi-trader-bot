@@ -5,6 +5,8 @@
   const Telegram = require('telegraf/telegram');
   const Markup = require('telegraf/markup');
 
+  const db = require('./db');
+
   let telegram;
   let bot;
 
@@ -12,6 +14,7 @@
     hi: 'hi'
   };
 
+  // todo: for testing only
   const commands = {
     ping: 'ping'
   }
@@ -28,7 +31,7 @@
     bot = new Telegraf(token);
 
     const messages = {
-      welcome: 'Welcome!',
+      welcome: 'Welcome',
       started: 'Bot started 🚀',
       ping: 'pong',
       error: 'Ooops'
@@ -36,9 +39,12 @@
 
     bot.catch((err) => {
       console.log(messages.error, err);
-    })
+    });
 
-    bot.start(({ reply }) => reply(messages.welcome, getKeyboard()));
+    bot.start(async (ctx) => {
+      await db.addOrUpdateUser(ctx.from);
+      return ctx.reply(`${messages.welcome}, ${ctx.from.first_name || ctx.from.last_name}!`, getKeyboard());
+    });
 
     // commands
     bot.command(commands.ping, ({ reply }) => reply(messages.ping, getKeyboard()));
