@@ -11,18 +11,9 @@
   let telegram;
   let bot;
 
-  const buttons = {
-    hi: 'hi'
-  };
-
-  // todo: for testing only
-  const commands = {
-    ping: 'ping'
-  }
-
   const getKeyboard = () => {
     return Markup
-      .keyboard([[buttons.hi]])
+      .keyboard([[resources.bot.buttons.hi]])
       .resize()
       .extra();
   }
@@ -31,25 +22,18 @@
     telegram = new Telegram(token);
     bot = new Telegraf(token);
 
-    const messages = {
-      welcome: 'Welcome',
-      started: 'Bot started 🚀',
-      ping: 'pong',
-      error: 'Ooops'
-    };
-
     bot.catch((err) => {
-      console.log(messages.error, err);
-      telegram.sendMessage(resources.app.telegram.myTelegramUserId, messages.error);
+      console.log(resources.bot.messages.error, err);
+      telegram.sendMessage(resources.app.telegram.myTelegramUserId, resources.bot.messages.error);
     });
 
     bot.start(async (ctx) => {
       await db.addOrUpdateUser(ctx.from);
-      return ctx.reply(`${messages.welcome}, ${ctx.from.first_name || ctx.from.last_name}!`, getKeyboard());
+      return ctx.reply(`${resources.bot.messages.welcome}, ${ctx.from.first_name || ctx.from.last_name}!`, getKeyboard());
     });
 
     // commands
-    bot.command(commands.ping, ({ reply }) => reply(messages.ping, getKeyboard()));
+    bot.command(resources.bot.commands.ping, ({ reply }) => reply(resources.bot.messages.ping, getKeyboard()));
 
     // texts
     bot.hears('hey', ({ reply }) => {
@@ -58,7 +42,7 @@
 
     bot.startPolling();
 
-    telegram.sendMessage(resources.app.telegram.myTelegramUserId, messages.started);
+    telegram.sendMessage(resources.app.telegram.myTelegramUserId, resources.bot.messages.started);
   }
 
   module.exports = { init };

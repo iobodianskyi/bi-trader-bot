@@ -1,4 +1,4 @@
-(async function () {
+(async () => {
   'use strict';
 
   const http = require('http');
@@ -14,20 +14,20 @@
   server.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
   server.use(cors({ origin: ['', 'http://localhost:4200'] }));
 
-  const startServer = () => {
+  const startServer = async () => {
     const httpServer = http.createServer(server);
     httpServer.listen(resources.app.port);
     console.log(`Server started on ${httpServer.address().port}`);
 
-    app.start();
+    await app.start();
   }
 
   // get app info
-  request(resources.projectInfoUrl, { qs: { id: resources.projectId }, json: true }, (error, responce, body) => {
+  request(resources.project.infoUrl, { qs: { id: resources.project.id }, json: true }, (error, responce, body) => {
     resources.app.port = body.port;
     resources.app.telegram = body.telegram;
 
     // start server
     startServer();
   });
-}());
+})();
