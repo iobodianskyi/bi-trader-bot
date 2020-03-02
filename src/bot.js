@@ -24,7 +24,7 @@
 
     bot.catch((err) => {
       console.log(resources.bot.messages.error, err);
-      telegram.sendMessage(resources.app.telegram.myTelegramUserId, resources.bot.messages.error);
+      sendAdminMessage(resources.bot.messages.error);
     });
 
     bot.start(async (ctx) => {
@@ -42,7 +42,11 @@
 
     bot.startPolling();
 
-    telegram.sendMessage(resources.app.telegram.myTelegramUserId, resources.bot.messages.started);
+    sendAdminMessage(resources.bot.messages.started);
+  }
+
+  const sendAdminMessage = (message) => {
+    telegram.sendMessage(resources.app.telegram.myTelegramUserId, message);
   }
 
   module.exports = { init };
