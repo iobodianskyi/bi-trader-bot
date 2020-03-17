@@ -4,7 +4,7 @@
 
   const init = () => {
     const socket = io.connect(
-      resources.app.urls.bStreams.publicUrl,
+      resources.app.urls.bStreams.localUrl,
       {
         path: resources.app.urls.bStreams.sockets.path,
         reconnect: true
