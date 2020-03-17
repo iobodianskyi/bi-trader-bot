@@ -6,6 +6,7 @@
   const Markup = require('telegraf/markup');
 
   const db = require('./db');
+  const bitmex = require('./bitmex/api');
   const resources = require('./resources');
 
   let telegram;
@@ -13,7 +14,7 @@
 
   const getKeyboard = () => {
     return Markup
-      .keyboard([[resources.bot.buttons.hi]])
+      .keyboard([[resources.bot.buttons.prices]])
       .resize()
       .extra();
   }
@@ -24,7 +25,7 @@
 
     bot.catch((err) => {
       console.log(resources.bot.messages.error, err);
-      telegram.sendMessage(resources.app.telegram.myTelegramUserId, resources.bot.messages.error);
+      sendAdminMessage(resources.bot.messages.error);
     });
 
     bot.start(async (ctx) => {
@@ -35,6 +36,17 @@
     // commands
     bot.command(resources.bot.commands.ping, ({ reply }) => reply(resources.bot.messages.ping, getKeyboard()));
 
+    // buttons
+    bot.hears(resources.bot.buttons.prices, async ({ reply }) => {
+      const prices = bitmex.getPrices();
+      let message = '';
+      for (const price in prices) {
+        message += `${price} - ${prices[price]}\n`;
+      }
+
+      return reply(message, getKeyboard());
+    });
+
     // texts
     bot.hears('hey', ({ reply }) => {
       return reply('reply', getKeyboard());
@@ -42,7 +54,11 @@
 
     bot.startPolling();
 
-    telegram.sendMessage(resources.app.telegram.myTelegramUserId, resources.bot.messages.started);
+    sendAdminMessage(resources.bot.messages.started);
+  }
+
+  const sendAdminMessage = (message) => {
+    telegram.sendMessage(resources.app.telegram.myTelegramUserId, message);
   }
 
   module.exports = { init };
