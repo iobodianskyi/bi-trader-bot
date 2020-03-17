@@ -6,6 +6,7 @@
   const Markup = require('telegraf/markup');
 
   const db = require('./db');
+  const bitmex = require('./bitmex/api');
   const resources = require('./resources');
 
   let telegram;
@@ -13,7 +14,7 @@
 
   const getKeyboard = () => {
     return Markup
-      .keyboard([[resources.bot.buttons.hi]])
+      .keyboard([[resources.bot.buttons.prices]])
       .resize()
       .extra();
   }
@@ -34,6 +35,17 @@
 
     // commands
     bot.command(resources.bot.commands.ping, ({ reply }) => reply(resources.bot.messages.ping, getKeyboard()));
+
+    // buttons
+    bot.hears(resources.bot.buttons.prices, async ({ reply }) => {
+      const prices = bitmex.getPrices();
+      let message = '';
+      for (const price in prices) {
+        message += `${price} - ${prices[price]}\n`;
+      }
+
+      return reply(message, getKeyboard());
+    });
 
     // texts
     bot.hears('hey', ({ reply }) => {
