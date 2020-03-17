@@ -7,9 +7,8 @@
     },
     app: {
       port: 0,
-      telegram: {
-
-      }
+      telegram: {},
+      urls: {}
     },
     bot: {
       messages: {},

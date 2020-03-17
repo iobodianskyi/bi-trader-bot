@@ -26,6 +26,7 @@
   request(resources.project.infoUrl, { qs: { id: resources.project.id }, json: true }, (error, responce, body) => {
     resources.app.port = body.port;
     resources.app.telegram = body.telegram;
+    resources.app.urls = body.urls;
 
     // start server
     startServer();
