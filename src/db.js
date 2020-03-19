@@ -36,7 +36,7 @@
   const addOrUpdateUser = async (user) => {
     const docSnapshot = await firestore
       .collection(collections.users)
-      .doc(user.id).get();
+      .doc(user.id + '').get();
 
     if (docSnapshot.exists) { // update user
       updateUser(user);
@@ -49,14 +49,14 @@
     user.settings = await getDefaultUserSettings();
 
     await firestore.collection(collections.users)
-      .doc(user.id)
+      .doc(user.id + '')
       .set(user);
   }
 
   const updateUser = async (user) => {
     await firestore
       .collection(collections.users)
-      .doc(user.id)
+      .doc(user.id + '')
       .set(user, { merge: true });
   }
 
