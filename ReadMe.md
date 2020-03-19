@@ -8,8 +8,6 @@ Install all required packages with `npm install`
 
 ## Setup
 
-`npm install`
-
 Navigate to `/src/config/` and place Firestore keys into `firestoreKeys.json`
 
 Run in that folder `git update-index --assume-unchanged firestoreKeys.json` to ignore local git changes
