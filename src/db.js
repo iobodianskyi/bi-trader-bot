@@ -46,6 +46,8 @@
   }
 
   const addUser = async (user) => {
+    user.settings = await getDefaultUserSettings();
+
     await firestore.collection(collections.users)
       .doc(user.id)
       .set(user);
@@ -56,6 +58,15 @@
       .collection(collections.users)
       .doc(user.id)
       .set(user, { merge: true });
+  }
+
+  const getDefaultUserSettings = async () => {
+    const settings = await (await firestore
+      .collection(collections.settings)
+      .doc(docs.resources)
+      .get()).data();
+
+    return settings.defaultUserSettings;
   }
 
   module.exports = { init, addOrUpdateUser };
