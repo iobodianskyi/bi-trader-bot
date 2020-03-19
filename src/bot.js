@@ -8,6 +8,7 @@
   const db = require('./db');
   const bitmex = require('./bitmex/api');
   const resources = require('./resources');
+  const formatter = require('./formatter');
 
   let telegram;
   let bot;
@@ -23,14 +24,19 @@
     telegram = new Telegram(token);
     bot = new Telegraf(token);
 
-    bot.catch((err) => {
-      console.log(resources.bot.messages.error, err);
+    bot.catch((error) => {
+      console.log(resources.bot.messages.error, error);
       sendAdminMessage(resources.bot.messages.error);
     });
 
     bot.start(async (ctx) => {
-      await db.addOrUpdateUser(ctx.from);
-      return ctx.reply(`${resources.bot.messages.welcome}, ${ctx.from.first_name || ctx.from.last_name}!`, getKeyboard());
+      const user = ctx.from;
+      await db.addOrUpdateUser(user);
+
+      const adminMessage = formatter.getAdminNewUserMessage(user);
+      sendAdminMessage(adminMessage);
+
+      return ctx.reply(`${resources.bot.messages.welcome}, ${user.first_name || user.last_name}!`, getKeyboard());
     });
 
     // commands
@@ -58,7 +64,8 @@
   }
 
   const sendAdminMessage = (message) => {
-    telegram.sendMessage(resources.app.telegram.myTelegramUserId, message);
+    const adminMessage = formatter.getAdminMessage(message);
+    telegram.sendMessage(resources.app.telegram.myTelegramUserId, adminMessage);
   }
 
   module.exports = { init };
