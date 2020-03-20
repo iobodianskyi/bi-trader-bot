@@ -71,5 +71,14 @@
     return settings.defaultUserSettings;
   }
 
-  module.exports = { init, addOrUpdateUser };
+  const getUserSettings = async (userId) => {
+    const user = await (await firestore
+      .collection(collections.users)
+      .doc(userId + '')
+      .get()).data();
+
+    return user.settings;
+  }
+
+  module.exports = { init, addOrUpdateUser, getUserSettings };
 })();

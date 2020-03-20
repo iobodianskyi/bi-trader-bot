@@ -37,7 +37,7 @@
       sendAdminMessage(adminMessage);
 
       const welcomeMessage = formatter.getWelcome(isNewUser, user);
-      
+
       return ctx.reply(welcomeMessage, getKeyboard());
     });
 
@@ -45,14 +45,18 @@
     bot.command(resources.bot.commands.ping, ({ reply }) => reply(resources.bot.messages.ping, getKeyboard()));
 
     // buttons
-    bot.hears(resources.bot.buttons.prices, async ({ reply }) => {
+    bot.hears(resources.bot.buttons.prices, async (ctx) => {
+      const userSettings = await db.getUserSettings(ctx.from.id);
       const prices = bitmex.getPrices();
       let message = '';
-      for (const price in prices) {
-        message += `${price} - ${prices[price]}\n`;
+      for (const pair in prices) {
+        const existPrice = userSettings.bitmex.displayPairPrices
+          .find(userPair => userPair === pair);
+
+        if (existPrice) { message += `${pair} - ${prices[pair]}\n`; }
       }
 
-      return reply(message, getKeyboard());
+      return ctx.reply(message, getKeyboard());
     });
 
     // texts
