@@ -31,12 +31,14 @@
 
     bot.start(async (ctx) => {
       const user = ctx.from;
-      await db.addOrUpdateUser(user);
+      const isNewUser = await db.addOrUpdateUser(user);
 
       const adminMessage = formatter.getAdminNewUserMessage(user);
       sendAdminMessage(adminMessage);
 
-      return ctx.reply(`${resources.bot.messages.welcome}, ${user.first_name || user.last_name}!`, getKeyboard());
+      const welcomeMessage = formatter.getWelcome(isNewUser, user);
+      
+      return ctx.reply(welcomeMessage, getKeyboard());
     });
 
     // commands
