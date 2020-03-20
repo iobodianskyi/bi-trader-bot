@@ -39,10 +39,12 @@
       .doc(user.id + '').get();
 
     if (docSnapshot.exists) { // update user
-      updateUser(user);
+      await updateUser(user);
     } else { // add new user
       await addUser(user);
     }
+
+    return !docSnapshot.exists;
   }
 
   const addUser = async (user) => {

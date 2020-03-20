@@ -15,5 +15,13 @@
     return message;
   }
 
-  module.exports = { getAdminMessage, getAdminNewUserMessage };
+  const getWelcome = (isNewUser, user) => {
+    let message = `${isNewUser ? resources.bot.messages.welcome : resources.bot.messages.welcomeBack}` +
+      ` ${user.first_name || user.last_name}!` +
+      `\n\n${resources.bot.messages.welcomeBotDescription.split('\\n').join('\n')}`;
+
+    return message;
+  }
+
+  module.exports = { getAdminMessage, getAdminNewUserMessage, getWelcome };
 })();
