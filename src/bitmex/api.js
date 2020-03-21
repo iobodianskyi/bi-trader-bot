@@ -5,6 +5,7 @@
   const state = require('../state')
 
   const prices = {};
+  let subscriberPriceAlerts;
 
   const getPrices = () => {
     return prices;
@@ -25,7 +26,29 @@
 
   const processNewQoute = (quote) => {
     prices[quote.symbol] = quote.bidPrice;
+
+    checkPriceAlerts(quote);
   }
 
-  module.exports = { init, getPrices, getPrice };
+  const checkPriceAlerts = (quote) => {
+    state.priceAlerts.forEach(priceAlert => {
+      if (priceAlert.symbol === quote.symbol) {
+        if (priceAlert.isLess) {
+          if (quote.bidPrice <= priceAlert.price) {
+            subscriberPriceAlerts(priceAlert);
+          }
+        } else {
+          if (quote.bidPrice >= priceAlert.price) {
+            subscriberPriceAlerts(priceAlert);
+          }
+        }
+      }
+    });
+  }
+
+  const subscribeToPriceAlerts = (callback) => {
+    subscriberPriceAlerts = callback;
+  }
+
+  module.exports = { init, getPrices, getPrice, subscribeToPriceAlerts };
 })();
