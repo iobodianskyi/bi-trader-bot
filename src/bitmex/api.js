@@ -2,9 +2,10 @@
   'use strict';
 
   const sockets = require('./sockets')
-  const resources = require('../resources')
+  const state = require('../state')
 
   const prices = {};
+  let subscriberPriceAlerts;
 
   const getPrices = () => {
     return prices;
@@ -18,14 +19,36 @@
     // init sockets
     const socket = sockets.init();
 
-    socket.on(resources.app.urls.bStreams.sockets.events.priceBitmex, (quote) => {
+    socket.on(state.app.urls.bStreams.sockets.events.priceBitmex, (quote) => {
       processNewQoute(quote);
     });
   }
 
   const processNewQoute = (quote) => {
     prices[quote.symbol] = quote.bidPrice;
+
+    checkPriceAlerts(quote);
   }
 
-  module.exports = { init, getPrices, getPrice };
+  const checkPriceAlerts = (quote) => {
+    state.priceAlerts.forEach(priceAlert => {
+      if (priceAlert.symbol === quote.symbol) {
+        if (priceAlert.isLess) {
+          if (quote.bidPrice <= priceAlert.price) {
+            subscriberPriceAlerts(priceAlert);
+          }
+        } else {
+          if (quote.bidPrice >= priceAlert.price) {
+            subscriberPriceAlerts(priceAlert);
+          }
+        }
+      }
+    });
+  }
+
+  const subscribeToPriceAlerts = (callback) => {
+    subscriberPriceAlerts = callback;
+  }
+
+  module.exports = { init, getPrices, getPrice, subscribeToPriceAlerts };
 })();

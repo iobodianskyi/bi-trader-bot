@@ -1,7 +1,7 @@
 (async () => {
   'use strict';
 
-  const resources = require('./resources');
+  const state = require('./state');
   const db = require('./db');
   const bitmex = require('./bitmex/api');
   const bot = require('./bot');
@@ -15,10 +15,10 @@
     bitmex.init();
 
     // start bot
-    bot.init(resources.app.telegram.biTraderBotToken);
+    bot.init(state.app.telegram.biTraderBotToken);
 
     // clear token
-    resources.app.telegram.biTraderBotToken = '';
+    state.app.telegram.biTraderBotToken = '';
   }
 
   module.exports = { start };

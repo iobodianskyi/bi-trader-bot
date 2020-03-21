@@ -1,5 +1,5 @@
 (() => {
-  const resources = {
+  const state = {
     // will be filled from db
     project: {
       id: 'bi-trader-bot',
@@ -13,9 +13,11 @@
     bot: {
       messages: {},
       buttons: {},
-      commands: {}
-    }
+      commands: {},
+      actions: {}
+    },
+    priceAlerts: []
   };
 
-  module.exports = resources;
+  module.exports = state;
 })();
