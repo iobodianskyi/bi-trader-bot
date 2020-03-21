@@ -13,13 +13,15 @@
   }
 
   const docs = {
-    resources: 'resources'
+    resources: 'resources',
+    priceAlerts: 'price-alerts'
   }
 
   const init = async () => {
     admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
     firestore = admin.firestore();
     await getSettings();
+    await getPriceAlerts();
   }
 
   const getSettings = async () => {
@@ -31,6 +33,15 @@
     resources.bot.messages = settings.messages;
     resources.bot.commands = settings.commands;
     resources.bot.buttons = settings.buttons;
+  }
+
+  const getPriceAlerts = async () => {
+    const alerts = await (await firestore
+      .collection(collections.settings)
+      .doc(docs.priceAlerts)
+      .get()).data().alerts;
+
+    resources.priceAlerts = alerts;
   }
 
   const addOrUpdateUser = async (user) => {

@@ -14,7 +14,8 @@
       messages: {},
       buttons: {},
       commands: {}
-    }
+    },
+    priceAlerts: []
   };
 
   module.exports = resources;
