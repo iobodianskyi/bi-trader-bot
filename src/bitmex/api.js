@@ -2,7 +2,7 @@
   'use strict';
 
   const sockets = require('./sockets')
-  const resources = require('../resources')
+  const state = require('../state')
 
   const prices = {};
 
@@ -18,7 +18,7 @@
     // init sockets
     const socket = sockets.init();
 
-    socket.on(resources.app.urls.bStreams.sockets.events.priceBitmex, (quote) => {
+    socket.on(state.app.urls.bStreams.sockets.events.priceBitmex, (quote) => {
       processNewQoute(quote);
     });
   }

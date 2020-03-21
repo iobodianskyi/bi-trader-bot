@@ -1,14 +1,14 @@
 (() => {
   'use strict';
 
-  const resources = require('./resources');
+  const state = require('./state');
 
   const getAdminMessage = (message) => {
     return `🎛 ${message}`;
   }
 
   const getAdminNewUserMessage = (user) => {
-    let message = resources.bot.messages.admin.newUser +
+    let message = state.bot.messages.admin.newUser +
       `${user.username ? `\n@${user.username}` : ''}` +
       `\n${user.first_name || ''} ${user.last_name || ''}`;
 
@@ -16,9 +16,9 @@
   }
 
   const getWelcome = (isNewUser, user) => {
-    let message = `${isNewUser ? resources.bot.messages.welcome : resources.bot.messages.welcomeBack}` +
+    let message = `${isNewUser ? state.bot.messages.welcome : state.bot.messages.welcomeBack}` +
       ` ${user.first_name || user.last_name}!` +
-      `\n\n${resources.bot.messages.welcomeBotDescription.split('\\n').join('\n')}`;
+      `\n\n${state.bot.messages.welcomeBotDescription.split('\\n').join('\n')}`;
 
     return message;
   }

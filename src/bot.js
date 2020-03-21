@@ -7,7 +7,7 @@
 
   const db = require('./db');
   const bitmex = require('./bitmex/api');
-  const resources = require('./resources');
+  const state = require('./state');
   const formatter = require('./formatter');
 
   let telegram;
@@ -15,7 +15,7 @@
 
   const getKeyboard = () => {
     return Markup
-      .keyboard([[resources.bot.buttons.prices]])
+      .keyboard([[state.bot.buttons.prices, state.bot.buttons.alerts]])
       .resize()
       .extra();
   }
@@ -25,8 +25,8 @@
     bot = new Telegraf(token);
 
     bot.catch((error) => {
-      console.log(resources.bot.messages.error, error);
-      sendAdminMessage(resources.bot.messages.error);
+      console.log(state.bot.messages.error, error);
+      sendAdminMessage(state.bot.messages.error);
     });
 
     bot.start(async (ctx) => {
@@ -42,10 +42,10 @@
     });
 
     // commands
-    bot.command(resources.bot.commands.ping, ({ reply }) => reply(resources.bot.messages.ping, getKeyboard()));
+    bot.command(state.bot.commands.ping, ({ reply }) => reply(state.bot.messages.ping, getKeyboard()));
 
     // buttons
-    bot.hears(resources.bot.buttons.prices, async (ctx) => {
+    bot.hears(state.bot.buttons.alerts, async (ctx) => {
       const userSettings = await db.getUserSettings(ctx.from.id);
       const prices = bitmex.getPrices();
       let message = '';
@@ -66,12 +66,12 @@
 
     bot.startPolling();
 
-    sendAdminMessage(resources.bot.messages.started);
+    sendAdminMessage(state.bot.messages.started);
   }
 
   const sendAdminMessage = (message) => {
     const adminMessage = formatter.getAdminMessage(message);
-    telegram.sendMessage(resources.app.telegram.myTelegramUserId, adminMessage);
+    telegram.sendMessage(state.app.telegram.myTelegramUserId, adminMessage);
   }
 
   module.exports = { init };

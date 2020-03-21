@@ -3,7 +3,7 @@
 
   const admin = require('firebase-admin');
   const serviceAccount = require('./config/firestoreKeys.json');
-  const resources = require('./resources');
+  const state = require('./state');
 
   let firestore;
 
@@ -30,9 +30,9 @@
       .doc(docs.resources)
       .get()).data();
 
-    resources.bot.messages = settings.messages;
-    resources.bot.commands = settings.commands;
-    resources.bot.buttons = settings.buttons;
+    state.bot.messages = settings.messages;
+    state.bot.commands = settings.commands;
+    state.bot.buttons = settings.buttons;
   }
 
   const getPriceAlerts = async () => {
@@ -41,7 +41,7 @@
       .doc(docs.priceAlerts)
       .get()).data().alerts;
 
-    resources.priceAlerts = alerts;
+    state.priceAlerts = alerts;
   }
 
   const addOrUpdateUser = async (user) => {

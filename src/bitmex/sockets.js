@@ -1,12 +1,12 @@
 (() => {
   const io = require('socket.io-client');
-  const resources = require('../resources');
+  const state = require('../state');
 
   const init = () => {
     const socket = io.connect(
-      resources.app.urls.bStreams.localUrl,
+      state.app.urls.bStreams.localUrl,
       {
-        path: resources.app.urls.bStreams.sockets.path,
+        path: state.app.urls.bStreams.sockets.path,
         reconnect: true
       });
 
