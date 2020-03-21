@@ -13,7 +13,8 @@
     bot: {
       messages: {},
       buttons: {},
-      commands: {}
+      commands: {},
+      actions: {}
     },
     priceAlerts: []
   };
