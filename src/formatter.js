@@ -18,10 +18,14 @@
   const getWelcome = (isNewUser, user) => {
     let message = `${isNewUser ? state.bot.messages.welcome : state.bot.messages.welcomeBack}` +
       ` ${user.first_name || user.last_name}!` +
-      `\n\n${state.bot.messages.welcomeBotDescription.split('\\n').join('\n')}`;
+      `\n\n${getMessage(state.bot.messages.welcomeBotDescription)}`;
 
     return message;
   }
 
-  module.exports = { getAdminMessage, getAdminNewUserMessage, getWelcome };
+  const getMessage = (message) => {
+    return message.split('\\n').join('\n');
+  }
+
+  module.exports = { getAdminMessage, getAdminNewUserMessage, getMessage, getWelcome };
 })();
