@@ -153,9 +153,11 @@
     const buttons = [Markup.callbackButton(state.bot.buttons.addPriceAlert, state.bot.actions.addPriceAlert)];
 
     if (userAlerts.length) {
-      userAlerts.forEach((alert) => {
-        buttons.push(Markup.callbackButton(`${alert.price} ✖️`, `🚫#${alert.userId}$${alert.symbol}&${alert.price}`));
-      });
+      userAlerts
+        .sort((a, b) => a.price - b.price)
+        .forEach((alert) => {
+          buttons.push(Markup.callbackButton(`${alert.price} ✖️`, `🚫#${alert.userId}$${alert.symbol}&${alert.price}`));
+        });
 
       const alertsKeyboard = Markup.inlineKeyboard(buttons);
 
