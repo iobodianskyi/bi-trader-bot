@@ -45,6 +45,11 @@
       return ctx.reply(welcomeMessage, getKeyboard());
     });
 
+    bot.help(async (ctx) => {
+      const helpMessage = formatter.getMessage(state.bot.messages.help);
+      return ctx.reply(helpMessage, getKeyboard());
+    });
+
     // commands
     bot.command(state.bot.commands.ping, ({ reply }) => reply(state.bot.messages.ping, getKeyboard()));
 
