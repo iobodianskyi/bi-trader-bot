@@ -26,3 +26,7 @@ Run `npm start` to start. Server started on `http://localhost:9004/`
 ## Contributing
 
 Contributions of all sizes are welcome. You can also help by [reporting bugs](https://github.com/iobodianskyi/bi-trader-bot/issues/new).
+
+## License
+
+This project is under the [MIT License](./LICENSE) 
