@@ -4,7 +4,7 @@
   const state = require('./state');
   const db = require('./db');
   const bitmex = require('./bitmex/api');
-  const bot = require('./bot');
+  const bot = require('./bot/bot');
 
   const start = async () => {
 
@@ -15,7 +15,7 @@
     bitmex.init();
 
     // start bot
-    bot.init(state.app.telegram.biTraderBotToken);
+    bot.start(state.app.telegram.biTraderBotToken);
 
     // clear token
     state.app.telegram.biTraderBotToken = '';
