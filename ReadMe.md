@@ -3,6 +3,8 @@
 
 Telegram bot for trading on [BitMEX](https://www.bitmex.com/) exchange. Built with [Nodejs](https://nodejs.org/), [socket.io](https://socket.io/), [telegraf.js](https://telegraf.js.org/) and [Firebase](https://firebase.google.com/)
 
+[![Build Status](https://travis-ci.org/iobodianskyi/bi-trader-bot.svg?branch=master)](https://travis-ci.org/iobodianskyi/bi-trader-bot)
+
 ## Get started
 
 ### Install `npm`
