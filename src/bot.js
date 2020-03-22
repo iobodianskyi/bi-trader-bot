@@ -150,20 +150,28 @@
   const sendAlertsMessage = async (ctx) => {
     const userAlerts = db.getUserPriceAlerts(ctx.from.id);
 
-    const buttons = [Markup.callbackButton(state.bot.buttons.addPriceAlert, state.bot.actions.addPriceAlert)];
+    const addButton = Markup.callbackButton(state.bot.buttons.addPriceAlert, state.bot.actions.addPriceAlert);
 
     if (userAlerts.length) {
+      const buttons = [];
+
+      let outerIndex = -1;
+      
       userAlerts
         .sort((a, b) => a.price - b.price)
-        .forEach((alert) => {
-          buttons.push(Markup.callbackButton(`${alert.price} ✖️`, `🚫#${alert.userId}$${alert.symbol}&${alert.price}`));
+        .forEach((alert, innerIndex) => {
+          const newButton = Markup.callbackButton(`${alert.price} ✖️`, `🚫#${alert.userId}$${alert.symbol}&${alert.price}`);
+          if (innerIndex % 4 === 0) { outerIndex++; }
+          buttons[outerIndex] ? buttons[outerIndex].push(newButton) : buttons.push([newButton]);
         });
+
+      buttons.push([addButton]);
 
       const alertsKeyboard = Markup.inlineKeyboard(buttons);
 
       return ctx.replyWithMarkdown(state.bot.messages.alertList, Extra.markup(alertsKeyboard));
     } else {
-      const alertsKeyboard = Markup.inlineKeyboard(buttons);
+      const alertsKeyboard = Markup.inlineKeyboard([addButton]);
 
       return ctx.replyWithMarkdown(state.bot.messages.noAlerts, Extra.markup(alertsKeyboard));
     }
