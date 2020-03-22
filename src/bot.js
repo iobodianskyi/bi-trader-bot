@@ -64,6 +64,8 @@
 
       await db.setUserLastAction(ctx.from.id, state.bot.actions.prices);
 
+      ctx.deleteMessage();
+
       return ctx.reply(message, getKeyboard());
     });
 
@@ -78,6 +80,8 @@
     // add price alert
     bot.action(state.bot.actions.addPriceAlert, async (ctx) => {
       await db.setUserLastAction(ctx.from.id, state.bot.actions.addPriceAlert);
+
+      ctx.deleteMessage();
 
       return ctx.reply(state.bot.messages.enterPriceForAlert);
     });
@@ -156,7 +160,7 @@
       const buttons = [];
 
       let outerIndex = -1;
-      
+
       userAlerts
         .sort((a, b) => a.price - b.price)
         .forEach((alert, innerIndex) => {
@@ -169,9 +173,13 @@
 
       const alertsKeyboard = Markup.inlineKeyboard(buttons);
 
+      ctx.deleteMessage();
+
       return ctx.replyWithMarkdown(state.bot.messages.alertList, Extra.markup(alertsKeyboard));
     } else {
       const alertsKeyboard = Markup.inlineKeyboard([addButton]);
+
+      ctx.deleteMessage();
 
       return ctx.replyWithMarkdown(state.bot.messages.noAlerts, Extra.markup(alertsKeyboard));
     }
