@@ -16,24 +16,27 @@
 
     bot.catch(actions.handleError);
 
-    bot.start(actions.start);
+    bot.start(actions.commands.start);
 
-    bot.help(actions.help);
+    bot.help(actions.commands.help);
 
     // prices button
-    bot.hears(state.bot.buttons.prices, actions.prices);
+    bot.hears(state.bot.buttons.prices, actions.buttons.prices);
 
     // price alerts button
-    bot.hears(state.bot.buttons.alerts, actions.alerts);
+    bot.hears(state.bot.buttons.alerts, actions.buttons.alerts);
 
     // settings button
-    bot.hears(state.bot.buttons.settings, actions.settings);
+    bot.hears(state.bot.buttons.settings, actions.buttons.settings);
 
     // add price alert
-    bot.action(state.bot.actions.addPriceAlert, actions.addPriceAlert);
+    bot.action(state.bot.actions.addPriceAlert, actions.actions.addPriceAlert);
 
     // delete price alert
-    bot.action(/🚫#(.*)\$(.*)&(.*)/i, actions.deletePriceAlert);
+    bot.action(/🚫#(.*)\$(.*)&(.*)/i, actions.actions.deletePriceAlert);
+
+    // settings actions
+    bot.action(/settings-(.*)/i, actions.actions.handleSettingsActions);
 
     // handle text inputs
     bot.on('text', actions.processTextInput);
