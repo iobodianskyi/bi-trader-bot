@@ -12,7 +12,9 @@
 
   const getKeyboard = () => {
     return Markup
-      .keyboard([[state.bot.buttons.prices, state.bot.buttons.alerts]])
+      .keyboard([
+        [state.bot.buttons.prices, state.bot.buttons.alerts],
+        [state.bot.buttons.settings]])
       .resize()
       .extra();
   }
@@ -63,6 +65,20 @@
   const alerts = async (ctx) => {
     await sendAlertsMessage(ctx);
     await db.setUserLastAction(ctx.from.id, state.bot.actions.alerts);
+  }
+
+  const settings = async (ctx) => {
+    const settingsButtons = [
+      Markup.callbackButton(state.bot.buttons.settingsPricePairs, state.bot.actions.settingsPricePairs),
+      Markup.callbackButton(state.bot.buttons.settingsTades, state.bot.actions.settingsTrades)
+    ];
+
+    ctx.deleteMessage();
+
+    ctx.reply(
+      state.bot.messages.settings,
+      Extra.markup(Markup.inlineKeyboard(settingsButtons))
+    );
   }
 
   const addPriceAlert = async (ctx) => {
@@ -153,6 +169,7 @@
     start,
     help,
     prices,
+    settings,
     handleError,
     alerts,
     addPriceAlert,
