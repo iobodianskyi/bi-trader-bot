@@ -169,6 +169,7 @@
   module.exports = {
     init,
     addOrUpdateUser,
+    updateUser,
     getUserSettings,
     getUserPriceAlerts,
     setUserLastAction,

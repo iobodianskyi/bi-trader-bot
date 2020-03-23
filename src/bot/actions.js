@@ -12,10 +12,19 @@
 
   const getKeyboard = () => {
     return Markup
-      .keyboard([[state.bot.buttons.prices, state.bot.buttons.alerts]])
+      .keyboard([
+        [state.bot.buttons.prices, state.bot.buttons.alerts],
+        [state.bot.buttons.settings]])
       .resize()
       .extra();
   }
+
+  const getSettingsInlineKeyboard = () => {
+    return Extra.markup(Markup.inlineKeyboard([
+      Markup.callbackButton(state.bot.buttons.settingsPricePairs, state.bot.actions.settings.pricePairs),
+      Markup.callbackButton(state.bot.buttons.settingsTades, state.bot.actions.settings.trades)
+    ]))
+  };
 
   const start = async (ctx) => {
     const user = ctx.from;
@@ -63,6 +72,12 @@
   const alerts = async (ctx) => {
     await sendAlertsMessage(ctx);
     await db.setUserLastAction(ctx.from.id, state.bot.actions.alerts);
+  }
+
+  const settings = async (ctx) => {
+    ctx.deleteMessage();
+
+    return ctx.reply(state.bot.messages.settings, getSettingsInlineKeyboard());
   }
 
   const addPriceAlert = async (ctx) => {
@@ -149,14 +164,107 @@
     }
   }
 
+  const handleSettingsActions = async (ctx) => {
+    ctx.answerCbQuery();
+
+    const userSettings = await db.getUserSettings(ctx.from.id);
+
+    let action = ctx.update.callback_query.data;
+
+    if (ctx.update.callback_query.data.includes('settings-price-pair-a-')) {
+      action = state.bot.actions.settings.addPricePair;
+    }
+
+    if (ctx.update.callback_query.data.includes('settings-price-pair-d-')) {
+      action = state.bot.actions.settings.deletePricePair;
+    }
+
+    switch (action) {
+      case state.bot.actions.settings.pricePairs: {
+        return handleSettingsDisplayPricePairs(ctx, userSettings);
+      }
+      case state.bot.actions.settings.trades: {
+        return ctx.editMessageText(
+          'In development',
+          Extra.markup(Markup.inlineKeyboard([]))
+        );
+      }
+      case state.bot.actions.settings.back: {
+        return ctx.editMessageText(
+          state.bot.messages.settings,
+          getSettingsInlineKeyboard());
+      }
+      case state.bot.actions.settings.addPricePair: {
+        const symbol = ctx.update.callback_query.data.slice(ctx.update.callback_query.data.lastIndexOf('-') + 1);
+        userSettings.bitmex.displayPairPrices.push(symbol);
+        const user = ctx.from;
+        user.settings = userSettings;
+
+        await db.updateUser(user);
+
+        return handleSettingsDisplayPricePairs(ctx, userSettings);
+      }
+      case state.bot.actions.settings.deletePricePair: {
+        const symbol = ctx.update.callback_query.data.slice(ctx.update.callback_query.data.lastIndexOf('-') + 1);
+
+        const index = userSettings.bitmex.displayPairPrices.indexOf(symbol);
+        if (index > -1) {
+          userSettings.bitmex.displayPairPrices.splice(index, 1);
+        }
+
+        const user = ctx.from;
+        user.settings = userSettings;
+
+        await db.updateUser(user);
+
+        return handleSettingsDisplayPricePairs(ctx, userSettings);
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
+  const handleSettingsDisplayPricePairs = async (ctx, userSettings) => {
+    const buttons = [];
+
+    const pairPrices = [];
+
+    const prices = bitmex.getPrices();
+    for (const pair in prices) {
+      pairPrices.push({ symbol: pair, price: prices[pair] });
+    }
+
+    let outerIndex = -1;
+
+    pairPrices.forEach((price, innerIndex) => {
+      const existPrice = userSettings.bitmex.displayPairPrices
+        .find(userPair => userPair === price.symbol);
+
+      let text = `${existPrice ? `❌` : `➕`} ${price.symbol}`;
+      let action = `settings-price-pair-${existPrice ? 'd' : 'a'}-${price.symbol}`;
+
+      const newButton = Markup.callbackButton(text, action);
+      if (innerIndex % 3 === 0) { outerIndex++; }
+      buttons[outerIndex] ? buttons[outerIndex].push(newButton) : buttons.push([newButton]);
+    });
+
+    buttons.push([Markup.callbackButton(state.bot.buttons.settingsBack, state.bot.actions.settings.back)]);
+
+    const markup = Extra.markup(Markup.inlineKeyboard(buttons));
+
+    return ctx.editMessageText(state.bot.messages.settingsPricePairs, markup);
+  }
+
+  const commands = { start, help };
+  const buttons = { prices, alerts, settings };
+  const actions = { addPriceAlert, deletePriceAlert, handleSettingsActions };
+
   module.exports = {
-    start,
-    help,
-    prices,
+    commands,
+    buttons,
     handleError,
-    alerts,
-    addPriceAlert,
-    deletePriceAlert,
+    actions,
     processTextInput
   };
 })();

@@ -1,15 +1,16 @@
 # BitMEX Trader Bot
-[![Start Messaging](https://img.techpowerup.org/200322/bi-traber-bot-start-3-1.png)](https://telegram.me/bi_trade_bot)
-
-Telegram bot for trading on [BitMEX](https://www.bitmex.com/) exchange. Built with [Nodejs](https://nodejs.org/), [socket.io](https://socket.io/), [telegraf.js](https://telegraf.js.org/) and [Firebase](https://firebase.google.com/)
 
 [![Build Status](https://travis-ci.org/iobodianskyi/bi-trader-bot.svg?branch=master)](https://travis-ci.org/iobodianskyi/bi-trader-bot)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/iobodianskyi/bi-trader-bot/compare)
 
+Telegram bot for trading on [BitMEX](https://www.bitmex.com/) exchange. Built with [Nodejs](https://nodejs.org/), [socket.io](https://socket.io/), [telegraf.js](https://telegraf.js.org/) and [Firebase](https://firebase.google.com/)
+
+[![Start Messaging](https://img.techpowerup.org/200322/bi-traber-bot-start-3-1.png)](https://telegram.me/bi_trade_bot)
+
 ## Get started
 
-### Install `npm`
+Install `npm`
 
 `npm` is installed with Node.js [Download Node.js and npm](https://nodejs.org/)
 

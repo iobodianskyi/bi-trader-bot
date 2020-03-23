@@ -2,9 +2,8 @@
   'use strict';
 
   const Telegraf = require('telegraf');
-  
+
   const botApi = require('./api');
-  const bitmex = require('../bitmex/api');
   const state = require('../state');
   const actions = require('./actions');
 
@@ -17,21 +16,27 @@
 
     bot.catch(actions.handleError);
 
-    bot.start(actions.start);
+    bot.start(actions.commands.start);
 
-    bot.help(actions.help);
+    bot.help(actions.commands.help);
 
-    // prices
-    bot.hears(state.bot.buttons.prices, actions.prices);
+    // prices button
+    bot.hears(state.bot.buttons.prices, actions.buttons.prices);
 
-    // price alerts
-    bot.hears(state.bot.buttons.alerts, actions.alerts);
+    // price alerts button
+    bot.hears(state.bot.buttons.alerts, actions.buttons.alerts);
+
+    // settings button
+    bot.hears(state.bot.buttons.settings, actions.buttons.settings);
 
     // add price alert
-    bot.action(state.bot.actions.addPriceAlert, actions.addPriceAlert);
+    bot.action(state.bot.actions.addPriceAlert, actions.actions.addPriceAlert);
 
     // delete price alert
-    bot.action(/🚫#(.*)\$(.*)&(.*)/i, actions.deletePriceAlert);
+    bot.action(/🚫#(.*)\$(.*)&(.*)/i, actions.actions.deletePriceAlert);
+
+    // settings actions
+    bot.action(/settings-(.*)/i, actions.actions.handleSettingsActions);
 
     // handle text inputs
     bot.on('text', actions.processTextInput);
