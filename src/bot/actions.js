@@ -241,7 +241,7 @@
       const existPrice = userSettings.bitmex.displayPairPrices
         .find(userPair => userPair === price.symbol);
 
-      let text = `${existPrice ? `❌` : `➕`} ${price.symbol}`;
+      let text = `${existPrice ? `x` : `+`} ${price.symbol}`;
       let action = `settings-price-pair-${existPrice ? 'd' : 'a'}-${price.symbol}`;
 
       const newButton = Markup.callbackButton(text, action);
