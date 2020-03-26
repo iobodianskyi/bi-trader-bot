@@ -14,16 +14,16 @@
     return Markup
       .keyboard([
         [state.bot.buttons.prices, state.bot.buttons.alerts],
-        [state.bot.buttons.settings]])
+        [state.bot.buttons.settings.settings]])
       .resize()
       .extra();
   }
 
   const getSettingsInlineKeyboard = () => {
     return Extra.markup(Markup.inlineKeyboard([
-      Markup.callbackButton(state.bot.buttons.settingsPricePairs, state.bot.actions.settings.pricePairs),
-      Markup.callbackButton(state.bot.buttons.settingsTades, state.bot.actions.settings.trades)
-    ]))
+      Markup.callbackButton(state.bot.buttons.settings.pricePairs, state.bot.actions.settings.pricePairs),
+      Markup.callbackButton(state.bot.buttons.settings.apiKeys, state.bot.actions.settings.apiKeys)
+    ]));
   };
 
   const start = async (ctx) => {
@@ -77,7 +77,7 @@
   const settings = async (ctx) => {
     ctx.deleteMessage();
 
-    return ctx.reply(state.bot.messages.settings, getSettingsInlineKeyboard());
+    return ctx.reply(state.bot.messages.settings.settings, getSettingsInlineKeyboard());
   }
 
   const addPriceAlert = async (ctx) => {
@@ -102,6 +102,53 @@
 
   const processTextInput = async (ctx) => {
     const userSettings = await db.getUserSettings(ctx.from.id);
+
+    if (ctx.update.message &&
+      ctx.update.message.reply_to_message) {
+
+      switch (ctx.update.message.reply_to_message.text) {
+        case state.bot.messages.settings.enterApiId: {
+
+          const user = ctx.from;
+          user.settings = userSettings;
+
+          user.settings.bitmex.api.id = ctx.update.message.text;
+
+          await db.updateUser(user);
+
+          ctx.deleteMessage(ctx.update.message.reply_to_message.message_id);
+          ctx.deleteMessage();
+
+          if (user.settings.bitmex.api.secret) {
+            return ctx.reply(state.bot.messages.settings.apiKeysReady, getKeyboard());
+          }
+
+          const forceReply = Extra.markdown().markup(Markup.forceReply());
+          return ctx.reply(state.bot.messages.settings.enterApiSecret, forceReply);
+        }
+        case state.bot.messages.settings.enterApiSecret: {
+          const user = ctx.from;
+          user.settings = userSettings;
+
+          user.settings.bitmex.api.secret = ctx.update.message.text;
+
+          await db.updateUser(user);
+
+          ctx.deleteMessage(ctx.update.message.reply_to_message.message_id);
+          ctx.deleteMessage();
+
+          if (user.settings.bitmex.api.id) {
+            return ctx.reply(state.bot.messages.settings.apiKeysReady, getKeyboard());
+          }
+
+          const forceReply = Extra.markdown().markup(Markup.forceReply());
+          return ctx.reply(state.bot.messages.settings.enterApiId, forceReply);
+        }
+        default:
+          return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard());
+      }
+    };
+
     switch (userSettings.lastAction.id) {
       case state.bot.actions.addPriceAlert:
       case state.bot.actions.addedPriceAlert: {
@@ -110,7 +157,7 @@
         let price = parseFloat(ctx.update.message.text.replace(',', '.'));
 
         if (isNaN(price)) {
-          return ctx.reply(state.bot.messages.incorrectPriceForAlert);
+          return ctx.reply(state.bot.messages.incorrectPriceForAlert, getKeyboard());
         }
 
         // by default pair is XBTUSD
@@ -122,11 +169,11 @@
         break;
       }
       case state.bot.actions.unknownText: {
-        return ctx.reply(state.bot.messages.cannotGetYou);
+        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard());
       }
       default: {
         await db.setUserLastAction(ctx.from.id, state.bot.actions.unknownText);
-        return ctx.reply(state.bot.messages.cannotGetYou);
+        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard());
       }
     }
   }
@@ -183,16 +230,48 @@
       case state.bot.actions.settings.pricePairs: {
         return handleSettingsDisplayPricePairs(ctx, userSettings);
       }
-      case state.bot.actions.settings.trades: {
+      case state.bot.actions.settings.apiKeys: {
+        const urlBitmexApiKeysButton = Markup.urlButton(
+          state.bot.buttons.bitmexApiKeysButton,
+          state.bot.buttons.bitmexApiKeysButtonUrl);
+        const enterIdButton = Markup.callbackButton(
+          state.bot.buttons.settings.enterApiId,
+          state.bot.actions.settings.enterApiId);
+        const enterSecretButton = Markup.callbackButton(
+          state.bot.buttons.settings.enterApiSecret,
+          state.bot.actions.settings.enterApiSecret);
+
+        let message = '';
+        if (!userSettings.bitmex.api.id && !userSettings.bitmex.api.secret) {
+          message = state.bot.messages.settings.apiMissed;
+        } else if (!userSettings.bitmex.api.id) {
+          message = state.bot.messages.settings.apiIdMissed;
+        } else if (!userSettings.bitmex.api.secret) {
+          message = state.bot.messages.settings.apiSecretMissed;
+        } else {
+          message = state.bot.messages.settings.apiFilled;
+        }
+
         return ctx.editMessageText(
-          'In development',
-          Extra.markup(Markup.inlineKeyboard([]))
+          formatter.getMessage(message),
+          Extra.markup(Markup.inlineKeyboard(
+            [
+              [urlBitmexApiKeysButton],
+              [enterIdButton, enterSecretButton],
+              [
+                Markup.callbackButton(state.bot.buttons.settings.back,
+                  state.bot.actions.settings.back)
+              ]
+            ]))
         );
       }
-      case state.bot.actions.settings.back: {
-        return ctx.editMessageText(
-          state.bot.messages.settings,
-          getSettingsInlineKeyboard());
+      case state.bot.actions.settings.enterApiId: {
+        const extra = Extra.markdown().markup(Markup.forceReply());
+        return ctx.reply(state.bot.messages.settings.enterApiId, extra);
+      }
+      case state.bot.actions.settings.enterApiSecret: {
+        const extra = Extra.markdown().markup(Markup.forceReply());
+        return ctx.reply(state.bot.messages.settings.enterApiSecret, extra);
       }
       case state.bot.actions.settings.addPricePair: {
         const symbol = ctx.update.callback_query.data.slice(ctx.update.callback_query.data.lastIndexOf('-') + 1);
@@ -219,6 +298,11 @@
 
         return handleSettingsDisplayPricePairs(ctx, userSettings);
       }
+      case state.bot.actions.settings.back: {
+        return ctx.editMessageText(
+          state.bot.messages.settings.settings,
+          getSettingsInlineKeyboard());
+      }
       default: {
         break;
       }
@@ -241,7 +325,7 @@
       const existPrice = userSettings.bitmex.displayPairPrices
         .find(userPair => userPair === price.symbol);
 
-      let text = `${existPrice ? `❌` : `➕`} ${price.symbol}`;
+      let text = `${existPrice ? `x` : `+`} ${price.symbol}`;
       let action = `settings-price-pair-${existPrice ? 'd' : 'a'}-${price.symbol}`;
 
       const newButton = Markup.callbackButton(text, action);
@@ -249,11 +333,11 @@
       buttons[outerIndex] ? buttons[outerIndex].push(newButton) : buttons.push([newButton]);
     });
 
-    buttons.push([Markup.callbackButton(state.bot.buttons.settingsBack, state.bot.actions.settings.back)]);
+    buttons.push([Markup.callbackButton(state.bot.buttons.settings.back, state.bot.actions.settings.back)]);
 
     const markup = Extra.markup(Markup.inlineKeyboard(buttons));
 
-    return ctx.editMessageText(state.bot.messages.settingsPricePairs, markup);
+    return ctx.editMessageText(state.bot.messages.settings.pricePairs, markup);
   }
 
   const commands = { start, help };
