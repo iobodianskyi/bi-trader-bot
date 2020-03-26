@@ -27,7 +27,7 @@
     bot.hears(state.bot.buttons.alerts, actions.buttons.alerts);
 
     // settings button
-    bot.hears(state.bot.buttons.settings, actions.buttons.settings);
+    bot.hears(state.bot.buttons.settings.settings, actions.buttons.settings);
 
     // add price alert
     bot.action(state.bot.actions.addPriceAlert, actions.actions.addPriceAlert);
