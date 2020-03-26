@@ -54,6 +54,7 @@
 
     if (docSnapshot.exists) { // update user
       await updateUser(user);
+      user.settings = docSnapshot.data().settings;
     } else { // add new user
       await addUser(user);
     }
