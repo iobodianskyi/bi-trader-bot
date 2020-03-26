@@ -10,7 +10,17 @@
   const bitmex = require('../bitmex/api');
   const formatter = require('../formatter');
 
-  const getKeyboard = () => {
+  const getKeyboard = (userSettings) => {
+    if (userSettings && userSettings.bitmex.api.id && userSettings.bitmex.api.secret) {
+      return Markup
+        .keyboard([
+          [state.bot.buttons.prices, state.bot.buttons.alerts],
+          [state.bot.buttons.wallet],
+          [state.bot.buttons.settings.settings]])
+        .resize()
+        .extra();
+    }
+
     return Markup
       .keyboard([
         [state.bot.buttons.prices, state.bot.buttons.alerts],
@@ -38,12 +48,13 @@
 
     const welcomeMessage = formatter.getWelcome(isNewUser, user);
 
-    ctx.reply(welcomeMessage, getKeyboard());
+    ctx.reply(welcomeMessage, getKeyboard(user.settings));
   }
 
   const help = async (ctx) => {
+    const userSettings = await db.getUserSettings(ctx.from.id);
     const helpMessage = formatter.getMessage(state.bot.messages.help);
-    return ctx.reply(helpMessage, getKeyboard());
+    return ctx.reply(helpMessage, getKeyboard(userSettings));
   }
 
   const handleError = async (error) => {
@@ -66,7 +77,7 @@
 
     ctx.deleteMessage();
 
-    return ctx.reply(message, getKeyboard());
+    return ctx.reply(message, getKeyboard(userSettings));
   }
 
   const alerts = async (ctx) => {
@@ -120,7 +131,7 @@
           ctx.deleteMessage();
 
           if (user.settings.bitmex.api.secret) {
-            return ctx.reply(state.bot.messages.settings.apiKeysReady, getKeyboard());
+            return ctx.reply(state.bot.messages.settings.apiKeysReady, getKeyboard(userSettings));
           }
 
           const forceReply = Extra.markdown().markup(Markup.forceReply());
@@ -138,14 +149,14 @@
           ctx.deleteMessage();
 
           if (user.settings.bitmex.api.id) {
-            return ctx.reply(state.bot.messages.settings.apiKeysReady, getKeyboard());
+            return ctx.reply(state.bot.messages.settings.apiKeysReady, getKeyboard(userSettings));
           }
 
           const forceReply = Extra.markdown().markup(Markup.forceReply());
           return ctx.reply(state.bot.messages.settings.enterApiId, forceReply);
         }
         default:
-          return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard());
+          return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
       }
     };
 
@@ -169,11 +180,11 @@
         break;
       }
       case state.bot.actions.unknownText: {
-        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard());
+        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
       }
       default: {
         await db.setUserLastAction(ctx.from.id, state.bot.actions.unknownText);
-        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard());
+        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
       }
     }
   }
@@ -340,15 +351,29 @@
     return ctx.editMessageText(state.bot.messages.settings.pricePairs, markup);
   }
 
+  const getWalletBalance = async (ctx) => {
+    const userSettings = await db.getUserSettings(ctx.from.id);
+    const wallet = await bitmex.trades.getWalletBalance(userSettings.bitmex.api);
+
+    if (wallet.error) {
+      return ctx.reply(wallet.message, getKeyboard(userSettings));
+    }
+
+    const message = formatter.getWalletBalanceMessage(wallet);
+    return ctx.reply(message, getKeyboard(userSettings));
+  }
+
   const commands = { start, help };
   const buttons = { prices, alerts, settings };
   const actions = { addPriceAlert, deletePriceAlert, handleSettingsActions };
+  const trades = { getWalletBalance };
 
   module.exports = {
     commands,
     buttons,
     handleError,
     actions,
+    trades,
     processTextInput
   };
 })();

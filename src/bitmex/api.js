@@ -1,8 +1,10 @@
 (async () => {
   'use strict';
 
-  const sockets = require('./sockets')
-  const state = require('../state')
+  const request = require('./request');
+
+  const sockets = require('./sockets');
+  const state = require('../state');
 
   const prices = {};
   let subscriberPriceAlerts;
@@ -50,5 +52,25 @@
     subscriberPriceAlerts = callback;
   }
 
-  module.exports = { init, getPrices, getPrice, subscribeToPriceAlerts };
+  const getWalletBalance = async (account) => {
+    try {
+      const result = await request.execute(
+        {
+          isTestnet: false,
+          apiKeyId: account.id,
+          apiKeySecret: account.secret
+        },
+        'GET',
+        '/user/margin'
+      );
+
+      return result;
+    } catch (error) {
+      return { error: true, message: error.message };
+    }
+  }
+
+  const trades = { getWalletBalance };
+
+  module.exports = { init, getPrices, getPrice, subscribeToPriceAlerts, trades };
 })();

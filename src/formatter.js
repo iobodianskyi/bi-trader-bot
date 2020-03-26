@@ -27,5 +27,13 @@
     return message.split('\\n').join('\n');
   }
 
-  module.exports = { getAdminMessage, getAdminNewUserMessage, getMessage, getWelcome };
+  const getWalletBalanceMessage = (wallet) => {
+    let message = 'Wallet Balance: ' + (wallet.walletBalance * 1e-8).toFixed(4);
+    message += '\nMargin Balance: ' + (wallet.marginBalance * 1e-8).toFixed(4)
+    message += '\nAvailable Balance: ' + (wallet.excessMargin * 1e-8).toFixed(4);
+
+    return message;
+  }
+
+  module.exports = { getAdminMessage, getAdminNewUserMessage, getMessage, getWelcome, getWalletBalanceMessage };
 })();

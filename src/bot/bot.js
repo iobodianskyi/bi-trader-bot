@@ -20,6 +20,9 @@
 
     bot.help(actions.commands.help);
 
+    // wallet button
+    bot.hears(state.bot.buttons.wallet, actions.trades.getWalletBalance);
+
     // prices button
     bot.hears(state.bot.buttons.prices, actions.buttons.prices);
 
