@@ -15,7 +15,7 @@
       return Markup
         .keyboard([
           [state.bot.buttons.prices, state.bot.buttons.alerts],
-          [state.bot.buttons.wallet],
+          [state.bot.buttons.wallet, state.bot.buttons.positions],
           [state.bot.buttons.settings.settings]])
         .resize()
         .extra();
@@ -363,10 +363,22 @@
     return ctx.reply(message, getKeyboard(userSettings));
   }
 
+  const getPositions = async (ctx) => {
+    const userSettings = await db.getUserSettings(ctx.from.id);
+    const positions = await bitmex.trades.getPositions(userSettings.bitmex.api);
+
+    if (positions.error) {
+      return ctx.reply(positions.message, getKeyboard(userSettings));
+    }
+
+    const message = formatter.getPositionsMessage(positions);
+    return ctx.reply(message, getKeyboard(userSettings));
+  }
+
   const commands = { start, help };
   const buttons = { prices, alerts, settings };
   const actions = { addPriceAlert, deletePriceAlert, handleSettingsActions };
-  const trades = { getWalletBalance };
+  const trades = { getWalletBalance, getPositions };
 
   module.exports = {
     commands,
