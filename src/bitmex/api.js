@@ -70,7 +70,29 @@
     }
   }
 
-  const trades = { getWalletBalance };
+  const getPositions = async (account) => {
+    try {
+      const result = await request.execute(
+        {
+          isTestnet: false,
+          apiKeyId: account.id,
+          apiKeySecret: account.secret
+        },
+        'GET',
+        'position',
+        {
+          filter: {}
+        }
+      );
+
+      return result
+        .filter((position) => position.avgEntryPrice && position.isOpen && (position.currentQty !== 0));
+    } catch (error) {
+      return { error: true, message: error.message };
+    }
+  }
+
+  const trades = { getWalletBalance, getPositions };
 
   module.exports = { init, getPrices, getPrice, subscribeToPriceAlerts, trades };
 })();

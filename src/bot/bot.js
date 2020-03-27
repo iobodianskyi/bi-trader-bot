@@ -23,6 +23,9 @@
     // wallet button
     bot.hears(state.bot.buttons.wallet, actions.trades.getWalletBalance);
 
+     // positions button
+     bot.hears(state.bot.buttons.positions, actions.trades.getPositions);
+
     // prices button
     bot.hears(state.bot.buttons.prices, actions.buttons.prices);
 

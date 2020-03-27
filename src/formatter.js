@@ -35,5 +35,26 @@
     return message;
   }
 
-  module.exports = { getAdminMessage, getAdminNewUserMessage, getMessage, getWelcome, getWalletBalanceMessage };
+  const getPositionsMessage = (positions) => {
+    let message = 'Positions:\n'
+    positions.forEach((position, index) => {
+      if (index !== 0) { message += '- - -\n'; }
+
+      message += position.symbol;
+      message += '\nSize: ' + position.openingQty;
+      message += '\nEntry Price: ' + position.avgEntryPrice;
+      message += '\nValue: ' + position.homeNotional + '\n';
+    });
+
+    return message;
+  }
+
+  module.exports = {
+    getAdminMessage,
+    getAdminNewUserMessage,
+    getMessage,
+    getWelcome,
+    getWalletBalanceMessage,
+    getPositionsMessage
+  };
 })();
