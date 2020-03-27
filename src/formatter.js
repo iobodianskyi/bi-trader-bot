@@ -28,9 +28,9 @@
   }
 
   const getWalletBalanceMessage = (wallet) => {
-    let message = 'Wallet Balance: ' + (wallet.walletBalance * 1e-8).toFixed(4);
-    message += '\nMargin Balance: ' + (wallet.marginBalance * 1e-8).toFixed(4)
-    message += '\nAvailable Balance: ' + (wallet.excessMargin * 1e-8).toFixed(4);
+    let message = 'Wallet Balance: ' + parseInt(wallet.walletBalance * 1e-4) / 10000;
+    message += '\nMargin Balance: ' + parseInt(wallet.marginBalance * 1e-4) / 10000;
+    message += '\nAvailable Balance: ' + parseInt(wallet.excessMargin * 1e-4) / 10000;
 
     return message;
   }
