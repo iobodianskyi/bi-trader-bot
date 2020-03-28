@@ -23,8 +23,8 @@
     // wallet button
     bot.hears(state.bot.buttons.wallet, actions.trades.getWalletBalance);
 
-     // positions button
-     bot.hears(state.bot.buttons.positions, actions.trades.getPositions);
+    // positions button
+    bot.hears(state.bot.buttons.positions, actions.trades.getPositions);
 
     // prices button
     bot.hears(state.bot.buttons.prices, actions.buttons.prices);
@@ -36,7 +36,7 @@
     bot.hears(state.bot.buttons.settings.settings, actions.buttons.settings);
 
     // add price alert
-    bot.action(state.bot.actions.addPriceAlert, actions.actions.addPriceAlert);
+    bot.action(state.bot.actions.alerts.add, actions.actions.addPriceAlert);
 
     // delete price alert
     bot.action(/🚫#(.*)\$(.*)&(.*)/i, actions.actions.deletePriceAlert);

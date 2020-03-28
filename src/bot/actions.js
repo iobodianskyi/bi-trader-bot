@@ -39,10 +39,6 @@
   const start = async (ctx) => {
     const user = ctx.from;
     const isNewUser = await db.addOrUpdateUser(user);
-    if (!isNewUser) {
-      await db.setUserLastAction(user.id, state.bot.actions.start);
-    }
-
     const adminMessage = formatter.getAdminNewUserMessage(user);
     botApi.sendAdminMessage(adminMessage);
 
@@ -73,8 +69,6 @@
       if (existPrice) { message += `${pair} - ${prices[pair]}\n`; }
     }
 
-    await db.setUserLastAction(ctx.from.id, state.bot.actions.prices);
-
     ctx.deleteMessage();
 
     return ctx.reply(message, getKeyboard(userSettings));
@@ -82,7 +76,6 @@
 
   const alerts = async (ctx) => {
     await sendAlertsMessage(ctx);
-    await db.setUserLastAction(ctx.from.id, state.bot.actions.alerts);
   }
 
   const settings = async (ctx) => {
@@ -92,11 +85,10 @@
   }
 
   const addPriceAlert = async (ctx) => {
-    await db.setUserLastAction(ctx.from.id, state.bot.actions.addPriceAlert);
+    ctx.answerCbQuery();
 
-    ctx.deleteMessage();
-
-    return ctx.reply(state.bot.messages.enterPriceForAlert);
+    const forceReply = Extra.markdown().markup(Markup.forceReply());
+    return ctx.reply(state.bot.messages.alerts.enterPrice, forceReply);
   }
 
   const deletePriceAlert = async (ctx) => {
@@ -105,10 +97,8 @@
     const price = parseFloat(ctx.update.callback_query.data.match(/\&(.*)/i)[1]);
 
     await db.deletePriceAlert(userId, symbol, price);
-
+    
     await sendAlertsMessage(ctx);
-
-    await db.setUserLastAction(ctx.from.id, state.bot.actions.deletePriceAlert);
   }
 
   const processTextInput = async (ctx) => {
@@ -117,12 +107,11 @@
     if (ctx.update.message &&
       ctx.update.message.reply_to_message) {
 
+      const user = ctx.from;
+      user.settings = userSettings;
+
       switch (ctx.update.message.reply_to_message.text) {
         case state.bot.messages.settings.enterApiId: {
-
-          const user = ctx.from;
-          user.settings = userSettings;
-
           user.settings.bitmex.api.id = ctx.update.message.text;
 
           await db.updateUser(user);
@@ -138,9 +127,6 @@
           return ctx.reply(state.bot.messages.settings.enterApiSecret, forceReply);
         }
         case state.bot.messages.settings.enterApiSecret: {
-          const user = ctx.from;
-          user.settings = userSettings;
-
           user.settings.bitmex.api.secret = ctx.update.message.text;
 
           await db.updateUser(user);
@@ -155,43 +141,39 @@
           const forceReply = Extra.markdown().markup(Markup.forceReply());
           return ctx.reply(state.bot.messages.settings.enterApiId, forceReply);
         }
-        default:
-          return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
-      }
-    };
+        case state.bot.messages.alerts.enterPrice:
+        case state.bot.messages.alerts.incorrect: {
+          let price = parseFloat(ctx.update.message.text.replace(',', '.'));
 
-    switch (userSettings.lastAction.id) {
-      case state.bot.actions.addPriceAlert:
-      case state.bot.actions.addedPriceAlert: {
-        // add new price alert
+          ctx.deleteMessage(ctx.update.message.reply_to_message.message_id);
 
-        let price = parseFloat(ctx.update.message.text.replace(',', '.'));
+          if (isNaN(price)) {
+            ctx.deleteMessage();
 
-        if (isNaN(price)) {
-          return ctx.reply(state.bot.messages.incorrectPriceForAlert, getKeyboard());
+            const forceReply = Extra.markdown().markup(Markup.forceReply());
+            return ctx.reply(state.bot.messages.alerts.incorrect, forceReply);
+          }
+
+          // by default pair is XBTUSD
+          const symbol = 'XBTUSD';
+          await db.addPriceAlert(ctx.from.id, symbol, price);
+          return await sendAlertsMessage(ctx);
         }
+        default: {
+          ctx.deleteMessage(ctx.update.message.reply_to_message.message_id);
+          ctx.deleteMessage();
 
-        // by default pair is XBTUSD
-        const symbol = 'XBTUSD';
-        await db.addPriceAlert(ctx.from.id, symbol, price);
-        await db.setUserLastAction(ctx.from.id, state.bot.actions.addedPriceAlert);
-        await sendAlertsMessage(ctx);
-
-        break;
-      }
-      case state.bot.actions.unknownText: {
-        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
-      }
-      default: {
-        await db.setUserLastAction(ctx.from.id, state.bot.actions.unknownText);
-        return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
+          return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
+        }
       }
     }
+
+    return ctx.reply(state.bot.messages.cannotGetYou, getKeyboard(userSettings));
   }
 
   const sendAlertsMessage = async (ctx) => {
     const userAlerts = db.getUserPriceAlerts(ctx.from.id);
-    const addButton = Markup.callbackButton(state.bot.buttons.addPriceAlert, state.bot.actions.addPriceAlert);
+    const addButton = Markup.callbackButton(state.bot.buttons.addPriceAlert, state.bot.actions.alerts.add);
 
     if (userAlerts.length) {
       const buttons = [];
