@@ -92,7 +92,31 @@
     }
   }
 
-  const trades = { getWalletBalance, getPositions };
+  const getOrders = async (account) => {
+    try {
+      const result = await request.execute(
+        {
+          isTestnet: false,
+          apiKeyId: account.id,
+          apiKeySecret: account.secret
+        },
+        'GET',
+        'order',
+        {
+          filter: {
+            'open': true
+          }
+        }
+      );
+
+      return result
+        .filter((order) => order);
+    } catch (error) {
+      return { error: true, message: error.message };
+    }
+  }
+
+  const trades = { getWalletBalance, getPositions, getOrders };
 
   module.exports = { init, getPrices, getPrice, subscribeToPriceAlerts, trades };
 })();

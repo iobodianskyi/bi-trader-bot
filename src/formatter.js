@@ -38,7 +38,7 @@
   const getPositionsMessage = (positions) => {
 
     if (!positions.length) {
-      return 'There is no opened positions';
+      return 'You have no opened positions';
     }
 
     let message = `Positions (${positions.length}):\n`;
@@ -55,12 +55,36 @@
     return message;
   }
 
+  const getOrdersMessage = (orders) => {
+
+    if (!orders.length) {
+      return 'You have no opened orders';
+    }
+
+    let message = `Orders (${orders.length}):\n`;
+    orders.forEach((order, index) => {
+      if (index !== 0) { message += '- - -\n'; }
+
+      message += order.symbol;
+      message += '\nContracts: ' + order.orderQty;
+      message += '\nSide: ' + order.side;
+      message += '\nPrice: ' + order.price;
+      if(order.ordType === 'StopLimit') {
+        message += '\nStop Price: ' + order.stopPx;
+      }
+      message += '\nType: ' + order.ordType + '\n';
+    });
+
+    return message;
+  }
+
   module.exports = {
     getAdminMessage,
     getAdminNewUserMessage,
     getMessage,
     getWelcome,
     getWalletBalanceMessage,
-    getPositionsMessage
+    getPositionsMessage,
+    getOrdersMessage
   };
 })();

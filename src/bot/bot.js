@@ -20,17 +20,20 @@
 
     bot.help(actions.commands.help);
 
+    // prices button
+    bot.hears(state.bot.buttons.prices, actions.buttons.prices);
+
+    // price alerts button
+    bot.hears(state.bot.buttons.alerts, actions.buttons.alerts);
+
     // wallet button
     bot.hears(state.bot.buttons.wallet, actions.trades.getWalletBalance);
 
     // positions button
     bot.hears(state.bot.buttons.positions, actions.trades.getPositions);
 
-    // prices button
-    bot.hears(state.bot.buttons.prices, actions.buttons.prices);
-
-    // price alerts button
-    bot.hears(state.bot.buttons.alerts, actions.buttons.alerts);
+    // orders button
+    bot.hears(state.bot.buttons.orders, actions.trades.getOrders);
 
     // settings button
     bot.hears(state.bot.buttons.settings.settings, actions.buttons.settings);
