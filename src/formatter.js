@@ -41,14 +41,15 @@
       return 'There is no opened positions';
     }
 
-    let message = 'Positions:\n'
+    let message = `Positions (${positions.length}):\n`;
     positions.forEach((position, index) => {
       if (index !== 0) { message += '- - -\n'; }
 
       message += position.symbol;
-      message += '\nSize: ' + position.openingQty;
-      message += '\nEntry Price: ' + position.avgEntryPrice;
-      message += '\nValue: ' + position.homeNotional + '\n';
+      message += '\nContracts: ' + position.currentQty;
+      message += '\nEntry: ' + position.avgEntryPrice;
+      message += '\nValue: ' + parseInt(position.homeNotional * 10000) / 10000;
+      message += '\nLeverage: ' + (position.crossMargin ? 'Cross' : (position.leverage + 'x')) + '\n';
     });
 
     return message;
