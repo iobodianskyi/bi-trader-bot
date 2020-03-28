@@ -363,6 +363,8 @@
       return ctx.reply(positions.message, getKeyboard(userSettings));
     }
 
+    ctx.deleteMessage();
+
     const message = formatter.getPositionsMessage(positions);
     return ctx.reply(message, getKeyboard(userSettings));
   }

@@ -36,6 +36,11 @@
   }
 
   const getPositionsMessage = (positions) => {
+
+    if (!positions.length) {
+      return 'There is no opened positions';
+    }
+
     let message = 'Positions:\n'
     positions.forEach((position, index) => {
       if (index !== 0) { message += '- - -\n'; }
