@@ -62,14 +62,24 @@
     const userSettings = await db.getUserSettings(ctx.from.id);
     const prices = bitmex.getPrices();
     let message = '';
+
+    ctx.deleteMessage();
+
+    if (!userSettings.bitmex.displayPairPrices.length) {
+      const message = state.bot.messages.prices.empty;
+      const inlineKeyboard = Extra.markup(Markup.inlineKeyboard([
+        Markup.callbackButton(state.bot.messages.settings.pricePairs, state.bot.actions.settings.pricePairs)
+      ]));
+
+      return ctx.reply(message, inlineKeyboard);
+    }
+
     for (const pair in prices) {
       const existPrice = userSettings.bitmex.displayPairPrices
         .find(userPair => userPair === pair);
 
       if (existPrice) { message += `${pair} - ${prices[pair]}\n`; }
     }
-
-    ctx.deleteMessage();
 
     return ctx.reply(message, getKeyboard(userSettings));
   }
@@ -97,7 +107,7 @@
     const price = parseFloat(ctx.update.callback_query.data.match(/\&(.*)/i)[1]);
 
     await db.deletePriceAlert(userId, symbol, price);
-    
+
     await sendAlertsMessage(ctx);
   }
 
