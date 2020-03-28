@@ -95,23 +95,6 @@
     return user.settings;
   }
 
-  const setUserLastAction = async (userId, actionId, actionData) => {
-    const docRef = firestore
-      .collection(collections.users)
-      .doc(userId + '');
-
-    await admin.firestore()
-      .runTransaction(async transaction => {
-        return transaction.get(docRef).then(snapshot => {
-          const settings = snapshot.get('settings');
-          settings.lastAction.id = actionId;
-          settings.lastAction.data = actionData || null;
-
-          transaction.set(docRef, { settings }, { merge: true })
-        });
-      });
-  }
-
   const getUserPriceAlerts = (userId) => {
     return state.priceAlerts.filter(priceAlert => priceAlert.userId === userId);
   }
@@ -173,7 +156,6 @@
     updateUser,
     getUserSettings,
     getUserPriceAlerts,
-    setUserLastAction,
     addPriceAlert,
     deletePriceAlert
   };
