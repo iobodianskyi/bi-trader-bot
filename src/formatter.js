@@ -8,7 +8,7 @@
   }
 
   const getAdminNewUserMessage = (user) => {
-    let message = state.bot.messages.admin.newUser +
+    let message = `[ 🤖 ${state.project.id} ] - ${state.bot.messages.admin.newUser} ` +
       `${user.username ? `\n@${user.username}` : ''}` +
       `\n${user.first_name || ''} ${user.last_name || ''}`;
 
@@ -28,9 +28,10 @@
   }
 
   const getWalletBalanceMessage = (wallet) => {
-    let message = 'Wallet Balance: ' + parseInt(wallet.walletBalance * 1e-4) / 10000;
-    message += '\nMargin Balance: ' + parseInt(wallet.marginBalance * 1e-4) / 10000;
-    message += '\nAvailable Balance: ' + parseInt(wallet.excessMargin * 1e-4) / 10000;
+    let message = 'Your Wallet Balances:\n';
+    message += parseInt(wallet.walletBalance * 1e-4) / 10000 + ' - Wallet\n';
+    message += parseInt(wallet.marginBalance * 1e-4) / 10000 + ' - Margin\n';
+    message += parseInt(wallet.excessMargin * 1e-4) / 10000 + ' - Available';
 
     return message;
   }
@@ -69,7 +70,7 @@
       message += '\nContracts: ' + order.orderQty;
       message += '\nSide: ' + order.side;
       message += '\nPrice: ' + order.price;
-      if(order.ordType === 'StopLimit') {
+      if (order.ordType === 'StopLimit') {
         message += '\nStop Price: ' + order.stopPx;
       }
       message += '\nType: ' + order.ordType + '\n';
