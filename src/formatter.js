@@ -8,7 +8,7 @@
   }
 
   const getAdminNewUserMessage = (user) => {
-    let message = state.bot.messages.admin.newUser +
+    let message = `[ 🤖 ${state.project.id} ] - ${state.bot.messages.admin.newUser} ` +
       `${user.username ? `\n@${user.username}` : ''}` +
       `\n${user.first_name || ''} ${user.last_name || ''}`;
 
@@ -70,7 +70,7 @@
       message += '\nContracts: ' + order.orderQty;
       message += '\nSide: ' + order.side;
       message += '\nPrice: ' + order.price;
-      if(order.ordType === 'StopLimit') {
+      if (order.ordType === 'StopLimit') {
         message += '\nStop Price: ' + order.stopPx;
       }
       message += '\nType: ' + order.ordType + '\n';

@@ -9,6 +9,7 @@
   const botApi = require('./api');
   const bitmex = require('../bitmex/api');
   const formatter = require('../formatter');
+  const httpRequest = require('../lib/http-request');
 
   const getKeyboard = (userSettings) => {
     if (userSettings && userSettings.bitmex.api.id && userSettings.bitmex.api.secret) {
@@ -40,7 +41,8 @@
     const user = ctx.from;
     const isNewUser = await db.addOrUpdateUser(user);
     const adminMessage = formatter.getAdminNewUserMessage(user);
-    botApi.sendAdminMessage(adminMessage);
+    
+    httpRequest.sendInfoBotMessage(adminMessage);
 
     const welcomeMessage = formatter.getWelcome(isNewUser, user);
 
