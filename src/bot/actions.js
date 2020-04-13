@@ -16,16 +16,13 @@
       return Markup
         .keyboard([
           [state.bot.buttons.prices, state.bot.buttons.alerts],
-          [state.bot.buttons.wallet, state.bot.buttons.positions, state.bot.buttons.orders],
-          [state.bot.buttons.settings.settings]])
+          [state.bot.buttons.wallet, state.bot.buttons.positions, state.bot.buttons.orders]])
         .resize()
         .extra();
     }
 
     return Markup
-      .keyboard([
-        [state.bot.buttons.prices, state.bot.buttons.alerts],
-        [state.bot.buttons.settings.settings]])
+      .keyboard([[state.bot.buttons.prices, state.bot.buttons.alerts]])
       .resize()
       .extra();
   }
@@ -41,7 +38,7 @@
     const user = ctx.from;
     const isNewUser = await db.addOrUpdateUser(user);
     const adminMessage = formatter.getAdminNewUserMessage(user);
-    
+
     httpRequest.sendInfoBotMessage(adminMessage);
 
     const welcomeMessage = formatter.getWelcome(isNewUser, user);
