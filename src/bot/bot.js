@@ -7,12 +7,10 @@
   const state = require('../state');
   const actions = require('./actions');
 
-  let bot;
-
   const start = (token) => {
     botApi.init(token);
 
-    bot = new Telegraf(token);
+    let bot = new Telegraf(token);
 
     bot.catch(actions.handleError);
 
@@ -52,9 +50,11 @@
     // handle text inputs
     bot.on('text', actions.processTextInput);
 
-    bot.startPolling();
+    // bot.startPolling();
 
     botApi.sendAdminMessage(state.bot.messages.started);
+
+    state.bot.telegramBot = bot;
   }
 
   module.exports = { start };
