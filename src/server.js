@@ -4,22 +4,19 @@
   const http = require('http');
   const express = require('express');
   const server = express();
-  const bodyParser = require('body-parser');
-  const cors = require('cors');
   const request = require('request');
   const app = require('./app');
   const state = require('./state');
 
-  server.use(bodyParser.json()); // support json encoded bodies
-  server.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
-  server.use(cors({ origin: ['', 'http://localhost:4200'] }));
-
   const startServer = async () => {
+    await app.start();
+
+    server.use(state.bot.telegramBot.webhookCallback(state.app.telegram.bot.webhook.path));
+    state.bot.telegramBot.telegram.setWebhook(state.app.telegram.bot.webhook.baseUrl + state.app.telegram.bot.webhook.path);
+
     const httpServer = http.createServer(server);
     httpServer.listen(state.app.port);
-    console.log(`Server started on ${httpServer.address().port}`);
-
-    await app.start();
+    console.log(`Bot started on ${httpServer.address().port}`);
   }
 
   // get app info

@@ -11,6 +11,7 @@
       urls: {}
     },
     bot: {
+      telegramBot: null,
       messages: {},
       buttons: {},
       commands: {},

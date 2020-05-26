@@ -18,7 +18,7 @@
 
   const sendAdminMessage = (message) => {
     const adminMessage = formatter.getAdminMessage(message);
-    telegram.sendMessage(state.app.telegram.myTelegramUserId, adminMessage);
+    telegram.sendMessage(state.app.telegram.common.myTelegramUserId, adminMessage);
   }
 
   const sendPriceAlertMessage = async (priceAlert) => {
