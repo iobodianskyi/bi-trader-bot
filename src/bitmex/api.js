@@ -22,11 +22,11 @@
     const socket = sockets.init();
 
     socket.on(state.app.urls.bStreams.sockets.events.priceBitmex, (quote) => {
-      processNewQoute(quote);
+      processNewQuote(quote);
     });
   }
 
-  const processNewQoute = (quote) => {
+  const processNewQuote = (quote) => {
     prices[quote.symbol] = quote.bidPrice;
 
     checkPriceAlerts(quote);
