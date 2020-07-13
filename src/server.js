@@ -7,6 +7,7 @@
   const request = require('request');
   const app = require('./app');
   const state = require('./state');
+  const auth = require('./config/auth');
 
   const startServer = async () => {
     await app.start();
@@ -20,7 +21,13 @@
   }
 
   // get app info
-  request(state.project.infoUrl, { qs: { id: state.project.id }, json: true }, (error, responce, body) => {
+  const token = auth.getAuthToken();
+  request(state.project.infoUrl, {
+    qs: { id: state.project.id },
+    auth: {
+      'bearer': token
+    }, json: true
+  }, (error, responce, body) => {
     state.app.port = body.port;
     state.app.telegram = body.telegram;
     state.app.urls = body.urls;
