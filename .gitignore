@@ -2,3 +2,4 @@ node_modules
 package-lock.json
 npm-debug.log
 src/config/firestoreKeys.json
+src/config/auth.js
