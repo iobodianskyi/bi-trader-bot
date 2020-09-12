@@ -6,7 +6,7 @@
 
 Telegram bot for trading on [BitMEX](https://www.bitmex.com/) exchange. Built with [Nodejs](https://nodejs.org/), [socket.io](https://socket.io/), [telegraf.js](https://telegraf.js.org/) and [Firebase](https://firebase.google.com/)
 
-[![Start Messaging](https://img.techpowerup.org/200322/bi-traber-bot-start-3-1.png)](https://telegram.me/bi_trade_bot)
+[![Start Messaging](https://lh3.googleusercontent.com/fife/ABSRlIpPGRWVTp3rWqnSI5hmA4Tb0D0dBqzgTzyXj0hk083NnAETt9saeguUL6nLoSBFX40ExasUeeHP3tDW_8OxEPZAetYS_nuteKm0rwWg6MfrQy7GmWIRL6IDEepDZSnG_iOBIHSLfhmmeys7VujOSteOKtMWdsi4XDGawd0wUFDS_67AJ3i_YmPNHsCCtVqwK1FqjkSe0I2BvQIgoCfA8zNiAm6k24Aql9GmsiYcIYmHW-0BueV0JWGARKe7_dxyl35k9MXGaLjaIMAt9zZIroEPV2dK-cacrtVwLkfwDgi3gRosPRGpy1vhu8bWERFDsfnETYCSjh_xsnE0tn5LfnCu0RkKlvcqLhyget-uWn4pmgYpy_Zo84iYRT8E1-a5XZaI9SyjDGTPvrhNPOAAw46hi_EyfzoI3nh1UQ6vdW9p4H9ZxNOhXMW2HhiEP74SsH_OmynMOxxsGXTI9eEdVGNIevn5be1z26H6-nE6o4HBmCpcYF0JZ-GeWX4dTvE2xFE-60OeVrSaKeTMNSo2F7vRib817wFedyTFXxeNhrWLes3TsmvUVHx-gkyGH7L2Nmq50D3OR-GfO3RkZV2LTuVrNUYVytKhOe36NLRSfy1RIaRv121m5f50Z8LwrWhmPHhOvZg8lIEGKJuQ3fW5g5cmOdhAAysBW_CjopqLuIiwkeYcR6qFpRQZuFslXfQT2IOc6mjoq4_Og2fbBa99k_kUrBfJUX9D8eA=w3072-h1496-ft)](https://telegram.me/bi_trade_bot)
 
 ## Get started
 
@@ -32,4 +32,4 @@ Contributions of all sizes are welcome. You can also help by [reporting bugs](ht
 
 ## License
 
-This project is under the [MIT License](./LICENSE) 
+This project is under the [MIT License](./LICENSE)
