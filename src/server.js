@@ -10,29 +10,47 @@
   const auth = require('./config/auth');
 
   const startServer = async () => {
+    // enable routes
+    const apiRoutes = require('./routes');
+    server.use(apiRoutes);
+
     await app.start();
 
-    server.use(state.bot.telegramBot.webhookCallback(state.app.telegram.bot.webhook.path));
-    state.bot.telegramBot.telegram.setWebhook(state.app.telegram.bot.webhook.baseUrl + state.app.telegram.bot.webhook.path);
+    server.use(
+      state.bot.telegramBot.webhookCallback(state.app.telegram.bot.webhook.path)
+    );
+    state.bot.telegramBot.telegram.setWebhook(
+      state.app.telegram.bot.webhook.baseUrl +
+        state.app.telegram.bot.webhook.path
+    );
 
     const httpServer = http.createServer(server);
     httpServer.listen(state.app.port);
-    console.log(`Bot started on ${httpServer.address().port}`);
-  }
+    console.log(
+      `Server started on http://localhost:${httpServer.address().port}`
+    );
+  };
 
   // get app info
   const token = auth.getAuthToken();
-  request(state.project.infoUrl, {
-    qs: { id: state.project.id },
-    auth: {
-      'bearer': token
-    }, json: true
-  }, (error, responce, body) => {
-    state.app.port = body.port;
-    state.app.telegram = body.telegram;
-    state.app.urls = body.urls;
+  request(
+    state.project.infoUrl,
+    {
+      qs: { id: state.project.id },
+      auth: {
+        bearer: token
+      },
+      json: true
+    },
+    (error, responce, body) => {
+      if (body.port) {
+        state.app.port = body.port;
+        state.app.telegram = body.telegram;
+        state.app.urls = body.urls;
 
-    // start server
-    startServer();
-  });
+        // start server
+        startServer();
+      }
+    }
+  );
 })();
