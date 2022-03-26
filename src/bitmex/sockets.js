@@ -3,12 +3,10 @@
   const state = require('../state');
 
   const init = () => {
-    const socket = io.connect(
-      state.app.urls.bStreams.localUrl,
-      {
-        path: state.app.urls.bStreams.sockets.path,
-        reconnect: true
-      });
+    const socket = io.connect(state.app.urls.bStreams.publicUrl, {
+      path: state.app.urls.bStreams.sockets.path,
+      reconnect: true
+    });
 
     socket.on('connect', () => {
       console.log('socket connected to b-streams');
@@ -19,7 +17,7 @@
     });
 
     return socket;
-  }
+  };
 
   module.exports = { init };
 })();
