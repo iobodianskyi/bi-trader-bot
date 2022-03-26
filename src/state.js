@@ -3,7 +3,7 @@
     // will be filled from db
     project: {
       id: 'bi-trader-bot',
-      infoUrl: 'https://us-central1-dev-obodianskyi.cloudfunctions.net/projectInfo'
+      infoUrl: 'https://us-central1-admin-io.cloudfunctions.net/projectInfo'
     },
     app: {
       port: 0,
