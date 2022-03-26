@@ -3,7 +3,7 @@
   const state = require('../state');
 
   const init = () => {
-    const socket = io.connect(state.app.urls.bStreams.publicUrl, {
+    const socket = io.connect(state.app.urls.bStreams.localUrl, {
       path: state.app.urls.bStreams.sockets.path,
       reconnect: true
     });
